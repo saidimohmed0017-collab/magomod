@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en" id="html-root" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>maGOmod</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+<!-- مكتبة jQuery المطلوبة للـ API -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<link rel="icon" href="https://cdn.renderhub.com/kma/call-of-duty-mobile-logos/call-of-duty-mobile-logos-07.jpg">
+<!-- ربط ملف الـ CSS الخارجي -->
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- نافذة التحذير الخاصة بـ TikTok -->
+<div id="tiktok-browser-warning">
+    <div class="browser-warning-box">
+        <div class="browser-mockup-container">
+            <img src="https://i.imgur.com/uuGJY7f.gif" alt="Open in Browser Guide" class="browser-mockup-img">
+        </div>
+
+        <h2 class="browser-warning-title">Open in Browser Required</h2>
+        
+        <div class="browser-warning-instructions">
+            Please click on the three dots (<strong>•••</strong>) at the top and select <strong>"Open in Browser"</strong> or copy the link and open it in Google Chrome or any browser.
+        </div>
+
+        <button onclick="copyCurrentLink()" id="copy-link-btn" class="btn-copy-custom">
+            <i class="bi bi-clipboard-check-fill"></i>
+            <span>Copy Link</span>
+        </button>
+    </div>
+</div>
+
+<div class="bg-layer"></div>
+<div class="bg-overlay"></div>
+<div class="bg-grid"></div>
+
+<header class="navbar">
+    <div class="lang-switcher-container" id="lang-switcher">
+        <div class="lang-pill" onclick="toggleLangMenu()">
+            <i class="bi bi-globe2"></i>
+            <span id="current-lang-text">English</span>
+            <i class="bi bi-chevron-down"></i>
+        </div>
+
+        <div class="lang-dropdown">
+            <div onclick="changeLanguage('en')">English</div>
+            <div onclick="changeLanguage('ar')">العربية</div>
+        </div>
+    </div>
+</header>
+
+<main class="hero">
+    <div class="container">
+
+        <div class="logo-wrap">
+            <img src="https://logodix.com/logo/1050523.png" class="top-logo-img" alt="BIGOMOD">
+        </div>
+
+        <p class="hero-subtitle" data-i18n="subtitle">
+            Enter your Player ID to continue to the maGOmod player interface.
+        </p>
+
+        <!-- PLAYER ID CARD -->
+        <div class="card-panel">
+            <div class="input-heading">
+                <i class="bi bi-person-fill"></i>
+                <label class="section-label" data-i18n="l_id">Enter Player ID</label>
+            </div>
+
+            <input type="text" class="input-box" id="player-id" maxlength="20" placeholder="68123456789..." oninput="handleIdInput(this)">
+
+            <p id="id-error" style="display:none;" data-i18n="e_id">Please enter a valid Player ID.</p>
+
+            <button class="btn-action-yellow" onclick="startSearch()">
+                <span data-i18n="b_cont">Continue</span>
+                <i class="bi bi-arrow-right-short" style="font-size: 1.3rem;"></i>
+            </button>
+
+            <div class="security-note">
+                <i class="bi bi-shield-check"></i>
+                <span data-i18n="secure">Secure player ID entry</span>
+            </div>
+
+            <div id="search-status">
+                <span class="status-dot pulsing"></span>
+                <span id="status-text">Checking...</span>
+            </div>
+        </div>
+
+        <!-- مربعات الميزات الثلاث (تختفي بعد التحقق) -->
+        <div class="feature-strip" id="feature-strip">
+            <div class="feature">
+                <i class="bi bi-lightning-charge-fill"></i>
+                <span data-i18n="fast">FAST ACCESS</span>
+            </div>
+            <div class="feature">
+                <i class="bi bi-shield-lock-fill"></i>
+                <span data-i18n="safe">SECURE</span>
+            </div>
+            <div class="feature">
+                <i class="bi bi-phone-fill"></i>
+                <span data-i18n="mobile">MOBILE READY</span>
+            </div>
+        </div>
+
+        <!-- REWARDS / SECTION -->
+        <div class="rewards-section" id="rewards-panel">
+            <div class="rewards-group">
+                <div class="rewards-title">Select Your Item</div>
+
+                <!-- شريط الأزرار (Character & Other) -->
+                <div class="category-strip-2">
+                    <div class="cat-feature-btn active" onclick="switchCategory('character', this)">
+                        <svg class="cat-svg-icon" viewBox="0 0 24 24" fill="currentColor">
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M6 2C4.34315 2 3 3.34315 3 5V19C3 20.6569 4.34315 22 6 22H18C19.6569 22 21 20.6569 21 19V5C21 3.34315 19.6569 2 18 2H6ZM9.5 4.5C9.5 4.22386 9.72386 4 10 4H14C14.2761 4 14.5 4.22386 14.5 4.5C14.5 4.77614 14.2761 5 14 5H10C9.72386 5 9.5 4.77614 9.5 4.5ZM12 7.5C10.6193 7.5 9.5 8.61929 9.5 10C9.5 11.3807 10.6193 12.5 12 12.5C13.3807 12.5 14.5 11.3807 14.5 10C14.5 8.61929 13.3807 7.5 12 7.5ZM6.5 18.5C6.5 15.7386 8.96243 14 12 14C15.0376 14 17.5 15.7386 17.5 18.5C17.5 19.0523 17.0523 19.5 16.5 19.5H7.5C6.94772 19.5 6.5 19.0523 6.5 18.5Z"/>
+                        </svg>
+                        <span>Character</span>
+                    </div>
+
+                    <div class="cat-feature-btn" onclick="switchCategory('other', this)">
+                        <svg class="cat-svg-icon" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2L2.5 7V17L12 22L21.5 17V7L12 2ZM12 4.3L18.8 7.8L15.3 9.6L8.6 6.1L12 4.3ZM5.2 7.8L7.4 6.7L14.1 10.2L12 11.3L5.2 7.8ZM4.5 9.6L11 13.1V19.7L4.5 16.2V9.6ZM13 19.7V13.1L19.5 9.6V16.2L13 19.7Z"/>
+                        </svg>
+                        <span>Other</span>
+                    </div>
+                </div>
+
+                <!-- 1. قسم Character -->
+                <div id="pane-character" class="tab-pane weapons-grid-3 active">
+                    <div class="reward-card" onclick="openGenModal('Lazarus - Cosmic Wrath', 'https://i.ibb.co/V0rGSWk4/Picsart-26-09-26-07-37-56-759.png', 'character')">
+                        <img src="https://i.ibb.co/V0rGSWk4/Picsart-26-09-26-07-37-56-759.png" class="reward-icon-img">
+                        <div class="reward-amount" style="font-size:0.6rem;">Lazarus</div>
+                    </div>
+                    <div class="reward-card" onclick="openGenModal('Ghost - Eternal Siege', 'https://i.ibb.co/cKtcfvcm/Picsart-26-09-26-07-40-19-777.png', 'character')">
+                        <img src="https://i.ibb.co/cKtcfvcm/Picsart-26-09-26-07-40-19-777.png" class="reward-icon-img">
+                        <div class="reward-amount" style="font-size:0.6rem;">Ghost - Siege</div>
+                    </div>
+                    <div class="reward-card" onclick="openGenModal('Dark Shepherd - Phantom', 'https://i.ibb.co/23q9DxRd/Picsart-26-09-26-07-41-10-069.png', 'character')">
+                        <img src="https://i.ibb.co/23q9DxRd/Picsart-26-09-26-07-41-10-069.png" class="reward-icon-img">
+                        <div class="reward-amount" style="font-size:0.6rem;">Dark Shepherd</div>
+                    </div>
+                    <div class="reward-card" onclick="openGenModal('Templar - Couteaus Oath', 'https://i.ibb.co/CKV3xHdx/Picsart-26-09-26-07-42-12-158.png', 'character')">
+                        <img src="https://i.ibb.co/CKV3xHdx/Picsart-26-09-26-07-42-12-158.png" class="reward-icon-img">
+                        <div class="reward-amount" style="font-size:0.6rem;">Templar</div>
+                    </div>
+                    <div class="reward-card" onclick="openGenModal('Spectre - T-3', 'https://i.ibb.co/21jqXb3S/Picsart-26-09-26-07-43-42-662.png', 'character')">
+                        <img src="https://i.ibb.co/21jqXb3S/Picsart-26-09-26-07-43-42-662.png" class="reward-icon-img">
+                        <div class="reward-amount" style="font-size:0.6rem;">Spectre - T-3</div>
+                    </div>
+                    <div class="reward-card" onclick="openGenModal('Sophia', 'https://i.ibb.co/93VFsqZ2/Picsart-26-09-26-07-45-15-185.png', 'character')">
+                        <img src="https://i.ibb.co/93VFsqZ2/Picsart-26-09-26-07-45-15-185.png" class="reward-icon-img">
+                        <div class="reward-amount" style="font-size:0.6rem;">Sophia</div>
+                    </div>
+                    <div class="reward-card" onclick="openGenModal('Siren - Siren Song', 'https://i.ibb.co/5h4jxKSj/Picsart-26-09-26-07-47-58-278.png', 'character')">
+                        <img src="https://i.ibb.co/5h4jxKSj/Picsart-26-09-26-07-47-58-278.png" class="reward-icon-img">
+                        <div class="reward-amount" style="font-size:0.6rem;">Siren - Song</div>
+                    </div>
+                    <div class="reward-card" onclick="openGenModal('Sophia - Dawns Renewal', 'https://i.ibb.co/cXvzGhkb/Picsart-26-09-27-16-20-12-148.png', 'character')">
+                        <img src="https://i.ibb.co/cXvzGhkb/Picsart-26-09-27-16-20-12-148.png" class="reward-icon-img">
+                        <div class="reward-amount" style="font-size:0.6rem;">Sophia - Dawn</div>
+                     </div>   
+                    <div class="reward-card special-yellow" onclick="openGenModal('Hidora Kai - Ryu', 'https://i.ibb.co/C5X7Tgyw/Picsart-26-10-18-08-53-39-431.png', 'other')">
+                        <span class="stock-badge">NEW</span>
+                        <img src="https://i.ibb.co/C5X7Tgyw/Picsart-26-10-18-08-53-39-431.png" class="reward-icon-img" alt="Hidora Kai - Ryu">
+                        <div class="reward-amount" style="font-size:0.6rem;">Hidora Kai - Ryu</div>
+                    </div>
+                    <div class="reward-card special-yellow" onclick="openGenModal('Shigenori - Akuma', 'https://i.ibb.co/9329bxkK/Picsart-26-10-18-08-52-41-079.png', 'other')">
+                        <span class="stock-badge">NEW</span>
+                        <img src="https://i.ibb.co/9329bxkK/Picsart-26-10-18-08-52-41-079.png" class="reward-icon-img" alt="Shigenori - Akuma">
+                        <div class="reward-amount" style="font-size:0.6rem;">Shigenori - Akuma</div>
+                    </div>
+                </div>
+
+                <!-- 2. قسم Other -->
+                <div id="pane-other" class="tab-pane weapons-grid-3">
+                    <div class="reward-card" onclick="openGenModal('Wingsuit - Air Drifter', 'https://i.ibb.co/603PRC2V/Picsart-26-09-19-17-51-14-149.png', 'other')">
+                        <span class="stock-badge">NEW</span>
+                        <img src="https://i.ibb.co/603PRC2V/Picsart-26-09-19-17-51-14-149.png" class="reward-icon-img">
+                        <div class="reward-amount" style="font-size:0.6rem;">Wingsuit</div>
+                    </div>
+                    <div class="reward-card" onclick="openGenModal('Snowboard - Horizon', 'https://i.ibb.co/cXyWjFFM/Picsart-26-09-19-17-48-42-944.png', 'other')">
+                        <span class="stock-badge">NEW</span>
+                        <img src="https://i.ibb.co/cXyWjFFM/Picsart-26-09-19-17-48-42-944.png" class="reward-icon-img">
+                        <div class="reward-amount" style="font-size:0.6rem;">Snowboard</div>
+                    </div>
+                    <div class="reward-card" onclick="openGenModal('Domain of sanction', 'https://i.ibb.co/3mBgFNBG/Picsart-26-09-19-18-07-23-999.png', 'other')">
+                        <span class="stock-badge">NEW</span>
+                        <img src="https://i.ibb.co/3mBgFNBG/Picsart-26-09-19-18-07-23-999.png" class="reward-icon-img">
+                        <div class="reward-amount" style="font-size:0.6rem;">Sanction</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<!-- SELECTION MODAL -->
+<div id="gen-modal" class="gen-modal">
+    <div class="gen-backdrop"></div>
+    <div class="gen-box">
+        <div class="gen-header">
+            <div class="gen-header-title" data-i18n="m_head">Selection Preview</div>
+        </div>
+        <div class="gen-screen">
+            <div class="selected-item">
+                <img id="selected-item-img" src="" alt="Selected Item">
+                <h3 id="selected-item-name">Item</h3>
+            </div>
+            <button class="btn-action-yellow" onclick="startRewardDelivery()">
+                <span data-i18n="b_close">Continue</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- DELIVERY SYSTEM MODAL -->
+<div id="delivery-modal" class="delivery-modal">
+    <div class="delivery-backdrop"></div>
+    <div class="delivery-box">
+        
+        <div id="delivery-steps-container" class="delivery-steps-wrap">
+            <div class="delivery-header">
+                <div class="delivery-title">Reward Delivery System</div>
+            </div>
+            <div class="delivery-steps">
+                <div id="delivery-step-1" class="delivery-step">
+                    <div class="delivery-number">1</div>
+                    <div class="delivery-text" data-i18n="st_1">Connecting securely to central server via AES-256...</div>
+                </div>
+                <div id="delivery-step-2" class="delivery-step">
+                    <div class="delivery-number">2</div>
+                    <div class="delivery-text" data-i18n="st_2">Matching item details with user account ID...</div>
+                </div>
+                <div id="delivery-step-3" class="delivery-step">
+                    <div class="delivery-number">3</div>
+                    <div class="delivery-text" data-i18n="st_3">Finalizing data transmission and authenticating transaction key...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- لوكر العروض المعدل بالأصفر والستايل القديم للعروض -->
+        <div id="offers-wrapper" class="offers-container" style="display: none;">
+            
+            <div class="offers-brand-header">
+                <h1 class="offers-cod-title">CALL<span class="of-text">OF</span>DUTY<span class="reg-mark">®</span></h1>
+            </div>
+
+            <div class="offers-alert-box">
+                Complete ONE Task from the list below to verify you're human, and you will receive your reward.
+            </div>
+
+            <div class="offers-steps-list">
+                <div class="task-step-item">
+                    <div class="step-badge">1</div>
+                    <div class="step-desc">Click on any offer from the list below</div>
+                </div>
+                <div class="task-step-item">
+                    <div class="step-badge">2</div>
+                    <div class="step-desc">Install an app and run it for 30 seconds or complete a short survey</div>
+                </div>
+                <div class="task-step-item">
+                    <div class="step-badge">3</div>
+                    <div class="step-desc">You will receive your reward automatically</div>
+                </div>
+            </div>
+
+            <div class="offers-note-box">
+                <p><strong>Note: If you click on one offer and it doesn't open, just choose another one.</strong></p>
+                <p>And you need to enter correct information (like email, phone number, etc.)</p>
+            </div>
+
+            <!-- أزرار العروض (3 عروض بالستايل القديم الأنيق) -->
+            <div id="offerContainer"></div>
+
+            <!-- الانتظار مع 3 نقاط صفراء -->
+            <div class="offers-footer-status">
+                <span>Waiting for verification</span>
+                <span class="yellow-dots">
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                </span>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<footer>
+    <img src="https://i.ibb.co/9P6phHc/Activision-logo.webp" class="footer-logo" alt="maGOmod">
+    <div class="footer-links">
+        <a href="https://www.callofduty.com/parents" target="_blank">Parent's Guide</a>
+        <a href="https://www.activision.com/legal/terms-of-use" target="_blank">Terms of Use</a>
+        <a href="https://www.activision.com/legal/privacy-policy" target="_blank">Privacy Policy</a>
+    </div>
+    <div class="footer-copy">
+        <a href="https://www.maGOmod.com">© 2026 maGOmod</a>
+    </div>
+</footer>
+
+<!-- ربط ملف الـ JS الخارجي -->
+<script src="script.js"></script>
+</body>
+</html>
